@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Electricity: Renewables & Carbon Intensity — Mini Dashboard</title>
+    <link rel="preconnect" href="https://cdn.plot.ly">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --card: #141a2c;
+            --ink: #e7ecff;
+            --muted: #93a1c6;
+            --accent: #71a5ff;
+            --good: #7cf4c2;
+            --bad: #ff9ba3
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            color: var(--ink);
+            background: linear-gradient(180deg, #0b1020, #0a0f1e 60%);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: auto;
+            padding: 28px
+        }
+
+        .header {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap
+        }
+
+        .title {
+            font-size: 30px;
+            line-height: 1.15;
+            margin: 0
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-top: 6px;
+            font-size: 14px
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px
+        }
+
+        select,
+        input,
+        button {
+            background: #0e1426;
+            border: 1px solid #263456;
+            color: var(--ink);
+            padding: 8px 10px;
+            border-radius: 10px
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            margin-top: 18px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #1e2946;
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .25)
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border: 1px solid #22314f;
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .metric {
+            font-size: 26px;
+            margin: 6px 0
+        }
+
+        .delta {
+            font-size: 14px
+        }
+
+        .pos {
+            color: var(--good)
+        }
+
+        .neg {
+            color: var(--bad)
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        footer {
+            margin-top: 26px;
+            color: var(--muted);
+            font-size: 12px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="header">
+            <div>
+                <h1 class="title">Electricity, at a glance: Renewables vs Carbon Intensity</h1>
+                <div class="subtitle">Pick a country. See long-run renewables share (%) and carbon intensity (gCO₂/kWh).
+                    Data: Our World in Data (Ember/Energy Institute).</div>
+                <div class="controls">
+                    <label>Country
+                        <select id="countrySel"></select>
+                    </label>
+                    <label>Year range
+                        <input id="yearMin" type="number" value="2000" style="width:90px"> —
+                        <input id="yearMax" type="number" value="2024" style="width:90px">
+                    </label>
+                    <button id="applyBtn">Update</button>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="min-width:260px">
+                    <div class="muted">Latest snapshot</div>
+                    <div id="kpi1" class="metric">—</div>
+                    <div id="kpi1delta" class="delta muted">—</div>
+                    <div id="kpi2" class="metric" style="margin-top:10px">—</div>
+                    <div id="kpi2delta" class="delta muted">—</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3 style="margin:0 0 6px 0">Renewables share of electricity (%)</h3>
+                <div id="chart1" style="height:360px"></div>
+            </div>
+            <div class="card">
+                <h3 style="margin:0 0 6px 0">Carbon intensity of electricity (gCO₂/kWh)</h3>
+                <div id="chart2" style="height:360px"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3 style="margin:0 0 6px 0">What this shows</h3>
+                <ul id="insights" class="muted" style="margin:0 0 8px 16px">
+                    <li>—</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 style="margin:0 0 6px 0">Methodology & Sources</h3>
+                <div class="muted">
+                    <p>Indicators are pulled live from Our World in Data “Grapher” endpoints:</p>
+                    <ul>
+                        <li>Share of electricity generated by renewables (1985–2024, %). Source: Ember - Energy
+                            Institute — processed by OWID. Last updated June 27, 2025. <a target="_blank"
+                                href="https://ourworldindata.org/grapher/share-electricity-renewables">Data page</a>
+                        </li>
+                        <li>Carbon intensity of electricity (≈2000–2024, gCO₂/kWh). Source: Ember — processed by OWID.
+                            <a target="_blank"
+                                href="https://ourworldindata.org/grapher/carbon-intensity-electricity">Data page</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Built by Jason F. Last updated <span id="datestamp"></span>.
+        </footer>
+    </div>
+
+    <script>
+        const URLS = {
+            renew: "https://ourworldindata.org/grapher/share-electricity-renewables.csv",
+            ci: "https://ourworldindata.org/grapher/carbon-intensity-electricity.csv"
+        };
+
+        const state = {
+            renew: [], ci: [], entities: [], current: "United Kingdom",
+            yearMin: 2000, yearMax: 2024
+        };
+
+        function parseCsvRows(text) {
+            const rows = d3.csvParse(text);
+            const cols = rows.columns;
+            const metric = cols.find(c => !["Entity", "Code", "Year"].includes(c));
+            return rows.map(r => ({
+                entity: r.Entity, code: r.Code, year: +r.Year,
+                value: r[metric] === "" ? null : +r[metric],
+                metric
+            }));
+        }
+
+        function unique(arr) { return Array.from(new Set(arr)); }
+
+        function sliceSeries(data, entity, y0, y1) {
+            return data.filter(d => d.entity === entity && d.year >= y0 && d.year <= y1)
+                .sort((a, b) => a.year - b.year);
+        }
+
+        function latestNonNull(series) {
+            for (let i = series.length - 1; i >= 0; i--) { if (series[i].value != null) return series[i]; }
+            return null;
+        }
+
+        function deltaNYears(series, years = 5) {
+            if (series.length === 0) return null;
+            const last = latestNonNull(series); if (!last) return null;
+            const targetYear = last.year - years;
+            const pastCand = [...series].reverse().find(d => d.year <= targetYear && d.value != null);
+            if (!pastCand) return null;
+            return { years: last.year - pastCand.year, change: last.value - pastCand.value, last };
+        }
+
+        function fmtPct(x) { return (x == null ? "—" : (Math.round(x * 10) / 10).toFixed(1) + "%"); }
+        function fmtCI(x) { return (x == null ? "—" : Math.round(x)); }
+
+        function updateKPIs(entity) {
+            const s1 = sliceSeries(state.renew, entity, state.yearMin, state.yearMax);
+            const s2 = sliceSeries(state.ci, entity, state.yearMin, state.yearMax);
+            const last1 = latestNonNull(s1), last2 = latestNonNull(s2);
+            const d1 = deltaNYears(s1, 5), d2 = deltaNYears(s2, 5);
+
+            document.getElementById("kpi1").textContent =
+                `Renewables share: ${fmtPct(last1?.value)} (${last1 ? last1.year : "—"})`;
+            document.getElementById("kpi1delta").innerHTML =
+                d1 ? `<span class="${d1.change >= 0 ? "pos" : "neg"}">${d1.change >= 0 ? "▲" : "▼"} ${Math.abs(Math.round(d1.change * 10) / 10).toFixed(1)} pp</span> in ${d1.years}y`
+                    : "—";
+
+            document.getElementById("kpi2").textContent =
+                `Carbon intensity: ${fmtCI(last2?.value)} gCO₂/kWh (${last2 ? last2.year : "—"})`;
+            document.getElementById("kpi2delta").innerHTML =
+                d2 ? `<span class="${d2.change <= 0 ? "pos" : "neg"}">${d2.change <= 0 ? "▼" : "▲"} ${Math.abs(Math.round(d2.change)).toFixed(0)}</span> in ${d2.years}y`
+                    : "—";
+
+            // insights
+            const bullets = [];
+            if (d1 && last1) {
+                bullets.push(`In ${last1.year}, renewables supplied <b>${fmtPct(last1.value)}</b> of electricity; a ${d1.change >= 0 ? "rise" : "drop"} of <b>${Math.abs(Math.round(d1.change * 10) / 10).toFixed(1)} pp</b> in ${d1.years} years.`);
+            }
+            if (d2 && last2) {
+                bullets.push(`Carbon intensity is <b>${fmtCI(last2.value)} gCO₂/kWh</b> (lower is better), a ${d2.change <= 0 ? "decrease" : "increase"} of <b>${Math.abs(Math.round(d2.change)).toFixed(0)}</b> in ${d2.years} years.`);
+            }
+            if (bullets.length === 0) bullets.push("Insufficient recent data in the selected range.");
+            document.getElementById("insights").innerHTML = bullets.map(b => `<li>${b}</li>`).join("");
+        }
+
+        function plot(entity) {
+            const s1 = sliceSeries(state.renew, entity, state.yearMin, state.yearMax);
+            const s2 = sliceSeries(state.ci, entity, state.yearMin, state.yearMax);
+
+            Plotly.react("chart1", [{
+                x: s1.map(d => d.year), y: s1.map(d => d.value), mode: "lines", name: "Renewables share (%)",
+                hovertemplate: "%{x}: %{y:.1f}%<extra></extra>"
+            }], {
+                margin: { l: 50, r: 10, t: 10, b: 40 }, paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+                xaxis: { gridcolor: "#243254" }, yaxis: { gridcolor: "#243254", ticksuffix: "%" },
+            }, { displayModeBar: false });
+
+            Plotly.react("chart2", [{
+                x: s2.map(d => d.year), y: s2.map(d => d.value), mode: "lines", name: "gCO₂/kWh",
+                hovertemplate: "%{x}: %{y:.0f} gCO₂/kWh<extra></extra>"
+            }], {
+                margin: { l: 50, r: 10, t: 10, b: 40 }, paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+                xaxis: { gridcolor: "#243254" }, yaxis: { gridcolor: "#243254" },
+            }, { displayModeBar: false });
+
+            updateKPIs(entity);
+        }
+
+        function populateCountries() {
+            const set = new Set(state.renew.map(d => d.entity));
+            state.entities = Array.from(set).sort((a, b) => a.localeCompare(b));
+            const sel = document.getElementById("countrySel");
+            sel.innerHTML = state.entities.map(e => `<option value="${e}">${e}</option>`).join("");
+            sel.value = state.entities.includes("United Kingdom") ? "United Kingdom" : state.entities[0];
+            state.current = sel.value;
+        }
+
+        function wire() {
+            document.getElementById("applyBtn").onclick = () => {
+                state.current = document.getElementById("countrySel").value;
+                state.yearMin = +document.getElementById("yearMin").value;
+                state.yearMax = +document.getElementById("yearMax").value || new Date().getFullYear();
+                plot(state.current);
+            };
+            document.getElementById("datestamp").textContent = new Date().toLocaleDateString();
+        }
+
+        async function init() {
+            wire();
+            const [t1, t2] = await Promise.all([
+                fetch(URLS.renew).then(r => r.text()),
+                fetch(URLS.ci).then(r => r.text())
+            ]);
+            state.renew = parseCsvRows(t1);
+            state.ci = parseCsvRows(t2);
+            populateCountries();
+            plot(state.current);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
