@@ -1,5 +1,5 @@
 /**
- * Regenerates public/data/history.json — the annual carbon-intensity and
+ * Regenerates src/data/history.json — the annual carbon-intensity and
  * renewable-share series the dashboard charts — from Our World in Data's open
  * energy dataset (https://github.com/owid/energy-data, CC BY 4.0).
  *
@@ -31,7 +31,7 @@ for (const name of COUNTRIES) {
 }
 
 writeFileSync(
-  new URL('../public/data/history.json', import.meta.url),
+  new URL('../src/data/history.json', import.meta.url),
   JSON.stringify({ source: 'Our World in Data energy dataset', url: 'https://github.com/owid/energy-data', retrieved: new Date().toISOString().slice(0, 10), countries }),
 )
 console.log('wrote history.json for', Object.keys(countries).length, 'countries')

@@ -11,6 +11,7 @@ import Planner from './components/Planner'
 import Leaderboard from './components/Leaderboard'
 import Quiz from './components/Quiz'
 import Glossary from './components/Glossary'
+import ErrorBoundary from './components/ErrorBoundary'
 import { useLiveData } from './hooks/useLiveData'
 import { DEFAULT_REGION, REGIONS } from './lib/regions'
 
@@ -67,20 +68,36 @@ export default function App() {
       <Nav region={region} onRegion={setRegion} status={weather.status} simulated={weather.simulated} />
 
       <main id="top">
-        <Hero region={region} now={model?.now} loading={!model} go={!intro} />
-        <Ticker region={region} now={model?.now} weather={weather.data?.current} />
-        <GridStory />
-        <Dashboard region={region} weather={weather} model={model} history={history} retryHistory={retryHistory} />
-        {/* Not re-keyed: sliders glide to a new region's weather once it has loaded. */}
-        <Simulator
-          region={region}
-          start={weather.data?.current}
-          seed={weather.status === 'ready' ? `${region.id}-${weather.updatedAt?.getTime()}` : null}
-        />
-        <Planner model={model} region={region} />
-        <Leaderboard region={region} onRegion={setRegion} />
-        <Quiz />
-        <Glossary />
+        <ErrorBoundary label="The introduction">
+          <Hero region={region} now={model?.now} loading={!model} go={!intro} />
+          <Ticker region={region} now={model?.now} weather={weather.data?.current} />
+        </ErrorBoundary>
+        <ErrorBoundary label="The story">
+          <GridStory />
+        </ErrorBoundary>
+        <ErrorBoundary label="The dashboard">
+          <Dashboard region={region} weather={weather} model={model} history={history} retryHistory={retryHistory} />
+        </ErrorBoundary>
+        <ErrorBoundary label="The simulator">
+          {/* Not re-keyed: sliders glide to a new region's weather once it has loaded. */}
+          <Simulator
+            region={region}
+            start={weather.data?.current}
+            seed={weather.status === 'ready' ? `${region.id}-${weather.updatedAt?.getTime()}` : null}
+          />
+        </ErrorBoundary>
+        <ErrorBoundary label="The planner">
+          <Planner model={model} region={region} />
+        </ErrorBoundary>
+        <ErrorBoundary label="The comparison">
+          <Leaderboard region={region} onRegion={setRegion} />
+        </ErrorBoundary>
+        <ErrorBoundary label="The quiz">
+          <Quiz />
+        </ErrorBoundary>
+        <ErrorBoundary label="The glossary">
+          <Glossary />
+        </ErrorBoundary>
       </main>
 
       <footer className="border-t border-white/10 px-6 py-10">

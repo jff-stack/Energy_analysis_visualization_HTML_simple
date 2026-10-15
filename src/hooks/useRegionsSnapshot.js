@@ -37,7 +37,20 @@ export function useRegionsSnapshot() {
         if (!rows.length) throw new Error('Unexpected weather response')
         setState({ status: 'ready', rows, error: null })
       })
-      .catch((e) => !ctrl.signal.aborted && setState({ status: 'error', rows: [], error: e.message }))
+      .catch((e) => {
+        if (ctrl.signal.aborted) return
+        // Never leave the section empty: show a modelled snapshot, clearly labelled.
+        const utcHour = new Date().getUTCHours() + new Date().getUTCMinutes() / 60
+        const rows = REGIONS.map((region) => {
+          const hour = (utcHour + region.lon / 15 + 24) % 24
+          const sun = Math.max(0, Math.sin(((hour - 6) / 12) * Math.PI))
+          const now = computeMix({ windKmh: 18, radiation: 700 * sun, hour, tempC: 15, profile: region.profile })
+          const hh = String(Math.floor(hour)).padStart(2, '0')
+          const mm = String(Math.floor((hour % 1) * 60)).padStart(2, '0')
+          return { region, now, localTime: `${hh}:${mm}` }
+        })
+        setState({ status: 'fallback', rows, error: e.message })
+      })
     return () => ctrl.abort()
   }, [tick])
 

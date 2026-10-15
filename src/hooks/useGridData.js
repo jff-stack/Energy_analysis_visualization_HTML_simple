@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { computeMix } from '../lib/gridModel'
+import HISTORY from '../data/history.json'
 
 /**
  * useGridData — turns weather into a grid, and pairs it with open history.
@@ -14,26 +15,8 @@ import { computeMix } from '../lib/gridModel'
  */
 
 // Annual series for the dashboard's countries, taken from Our World in Data's
-// open energy dataset and shipped with the site (see scripts/build-history.mjs).
-// Same-origin and a few kilobytes, so it loads reliably on any network.
-const HISTORY_URL = `${import.meta.env.BASE_URL}data/history.json`
-
-let historyPromise = null
-function loadHistory() {
-  if (!historyPromise) {
-    historyPromise = fetch(HISTORY_URL)
-      .then((r) => {
-        if (!r.ok) throw new Error(`History data unavailable (${r.status})`)
-        return r.json()
-      })
-      .catch((e) => {
-        historyPromise = null // allow a retry
-        throw e
-      })
-  }
-  return historyPromise
-}
-
+// open energy dataset (regenerate with `npm run history`). Imported at build
+// time, so it ships inside the JavaScript bundle: no request, nothing to fail.
 export function useGridData(weather, region) {
   // Layer 1: modelled hourly grid.
   const model = useMemo(() => {
@@ -54,20 +37,11 @@ export function useGridData(weather, region) {
   const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
-    let alive = true
-    setHistory((h) => ({ ...h, status: 'loading' }))
-    loadHistory()
-      .then((data) => {
-        if (!alive) return
-        const entry = data.countries?.[region.owid] ?? {}
-        const carbon = entry.carbon ?? []
-        const renewables = entry.renewables ?? []
-        if (!carbon.length && !renewables.length) throw new Error(`No open data found for ${region.country}`)
-        setHistory({ status: 'ready', carbon, renewables, error: null })
-      })
-      .catch((e) => alive && setHistory({ status: 'error', carbon: [], renewables: [], error: e.message }))
-    return () => {
-      alive = false
+    const entry = HISTORY.countries?.[region.owid]
+    if (entry && (entry.carbon.length || entry.renewables.length)) {
+      setHistory({ status: 'ready', carbon: entry.carbon, renewables: entry.renewables, error: null })
+    } else {
+      setHistory({ status: 'error', carbon: [], renewables: [], error: `No open data for ${region.country}` })
     }
   }, [region, attempt])
 

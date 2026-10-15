@@ -16,9 +16,23 @@
       rel="stylesheet"
     />
     <title>Current — The grid, explained live</title>
+    <style>
+      html, body { margin: 0; background: #120e0b; color: #fcf3e6; font-family: Inter, system-ui, sans-serif; }
+      .boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+      .boot b { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #ffb038; }
+      .boot i { width: 28px; height: 28px; border: 3px solid #ffb038; animation: boot 1.6s ease-in-out infinite; }
+      @keyframes boot { 50% { transform: rotate(90deg) scale(0.7); } }
+    </style>
+    <script type="module" crossorigin src="./assets/app-BGCztMOs.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/motion-Bc4sbjuA.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-DUiZErcH.js">
+    <link rel="stylesheet" crossorigin href="./assets/app-WGvAATZh.css">
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div id="root">
+      <!-- Painted before any script runs; React replaces it on mount. -->
+      <div class="boot"><i></i><b>Current · loading</b></div>
+      <noscript><p style="text-align:center">This explainer needs JavaScript enabled.</p></noscript>
+    </div>
   </body>
 </html>

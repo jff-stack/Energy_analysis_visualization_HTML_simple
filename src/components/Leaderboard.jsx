@@ -32,13 +32,13 @@ export default function Leaderboard({ region, onRegion }) {
         {/* A fixed-height stage: loading, error and ready all occupy the same box. */}
         <div style={{ minHeight: 9 * ROW }}>
           {status === 'loading' && <LoadingBlock height={9 * ROW} label="Loading all regions" />}
-          {status === 'error' && (
-            <div className="flex flex-wrap items-center gap-3 p-8 text-sm" role="status">
-              <span>The comparison could not be loaded ({error}).</span>
+          {status === 'fallback' && (
+            <div className="flex flex-wrap items-center gap-3 border-b border-orange-900/50 px-5 py-3 text-sm sm:px-8" role="status">
+              <span>Live weather could not be reached ({error}). Showing a modelled snapshot.</span>
               <button onClick={retry} className="chip hover:bg-amber hover:text-void">Retry</button>
             </div>
           )}
-          {status === 'ready' && (
+          {(status === 'ready' || status === 'fallback') && (
             <ol>
               {sorted.map(({ region: r, now, localTime }, i) => {
                 const active = r.id === region.id

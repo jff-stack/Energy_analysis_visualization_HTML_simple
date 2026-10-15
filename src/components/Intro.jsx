@@ -36,7 +36,15 @@ export default function Intro({ onDone }) {
       .to('[data-intro-word] > span', { yPercent: -110, duration: 0.6, ease: 'power3.in', stagger: 0.04 }, 1.75)
       .to(root.current, { clipPath: 'inset(0 0 100% 0)', duration: 0.95, ease: 'expo.inOut' }, 2.0)
 
+    // Failsafe: whatever happens to the animation (throttled tab, error), the
+    // curtain is gone within a few seconds and scrolling is restored.
+    const failsafe = setTimeout(() => {
+      html.style.overflow = prev
+      onDone()
+    }, 5000)
+
     return () => {
+      clearTimeout(failsafe)
       tl.kill()
       html.style.overflow = prev
     }

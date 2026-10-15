@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#120E0B" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="A live, interactive explainer for how the electricity grid works — real weather, modelled generation, and a simulator you can play with."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Current — The grid, explained live</title>
+    <style>
+      html, body { margin: 0; background: #120e0b; color: #fcf3e6; font-family: Inter, system-ui, sans-serif; }
+      .boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+      .boot b { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #ffb038; }
+      .boot i { width: 28px; height: 28px; border: 3px solid #ffb038; animation: boot 1.6s ease-in-out infinite; }
+      @keyframes boot { 50% { transform: rotate(90deg) scale(0.7); } }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Painted before any script runs; React replaces it on mount. -->
+      <div class="boot"><i></i><b>Current · loading</b></div>
+      <noscript><p style="text-align:center">This explainer needs JavaScript enabled.</p></noscript>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
