@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   "Cinematic brutalism" tokens.
+   Structure: hard right angles, 1px warm rust rules (orange-900), heavy
+   Inter Black type. Colour: flat amber, gold and sunset on obsidian.
+   ------------------------------------------------------------------ */
+:root {
+  --c-void: 18 14 11;       /* #120E0B */
+  --c-panel: 26 21 18;      /* #1A1512 */
+  --c-ink: 252 243 230;
+  --c-mute: 178 160 140;
+  --c-amber: 255 176 56;
+  --c-gold: 240 200 120;
+  --c-sunset: 255 122 61;
+  --c-sage: 156 186 148;
+  --rule: rgb(124 45 18 / 0.5); /* orange-900 @ 50% */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    /* Page height changes while data loads; never let the browser re-anchor. */
+    overflow-anchor: none;
+  }
+  /* Lenis recommended resets */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  body {
+    @apply bg-void font-sans text-ink antialiased;
+    overflow-x: hidden;
+  }
+  ::selection { background: rgb(var(--c-amber)); color: rgb(var(--c-void)); }
+  :focus-visible { outline: 2px solid rgb(var(--c-amber)); outline-offset: 3px; }
+  button, select, a { border-radius: 0; }
+}
+
+@layer components {
+  /* Slab: a flat, sharp panel. No blur, no radius — just a warm rule. */
+  .slab {
+    background: rgb(var(--c-panel) / 0.72);
+    border: 1px solid var(--rule);
+  }
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-amber;
+  }
+  /* The voice of the site: huge, heavy, tight, uppercase. */
+  .display {
+    @apply font-black uppercase;
+    letter-spacing: -0.06em;
+    line-height: 0.86;
+  }
+  .display em {
+    @apply not-italic;
+    display: inline-block;
+    color: rgb(var(--c-amber));
+  }
+  /* Big numerals: black weight, flat amber. */
+  .numeral {
+    @apply font-black text-amber;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-4 text-[13px] font-extrabold uppercase tracking-[0.12em] transition-all duration-200;
+    border: 1px solid rgb(var(--c-amber));
+  }
+  .btn-primary {
+    background: rgb(var(--c-amber));
+    color: rgb(var(--c-void));
+  }
+  .btn-primary:hover { background: rgb(var(--c-void)); color: rgb(var(--c-amber)); }
+  .btn-ghost { @apply text-amber; background: transparent; }
+  .btn-ghost:hover { background: rgb(var(--c-amber)); color: rgb(var(--c-void)); }
+  .chip {
+    @apply inline-flex items-center gap-2 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-ink/85;
+    border: 1px solid var(--rule);
+    background: rgb(var(--c-void));
+  }
+}
+
+/* Page ground: flat obsidian with a faint structural grid. */
+.ambient {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  background-color: rgb(var(--c-void));
+  background-image: linear-gradient(90deg, rgb(124 45 18 / 0.1) 1px, transparent 1px);
+  background-size: 160px 100%;
+}
+
+/* Live indicator: a flat square that blinks softly. */
+.pulse-dot {
+  width: 9px; height: 9px; background: rgb(var(--c-amber));
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: 0.3; } }
+
+/* Ticker */
+.marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Range sliders: flat bar, square thumb. */
+input[type='range'].slider {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; cursor: pointer;
+  --fill: 50%;
+}
+input[type='range'].slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(to right, rgb(var(--c-amber)) var(--fill), rgb(124 45 18 / 0.45) var(--fill)); /* hard stop = solid two-tone track */
+}
+input[type='range'].slider::-moz-range-track { height: 6px; background: rgb(124 45 18 / 0.45); }
+input[type='range'].slider::-moz-range-progress { height: 6px; background: rgb(var(--c-amber)); }
+input[type='range'].slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 30px; margin-top: -12px; border-radius: 0;
+  background: rgb(var(--c-amber)); border: 0;
+  transition: transform 0.15s;
+}
+input[type='range'].slider:active::-webkit-slider-thumb { transform: scaleY(1.15); }
+input[type='range'].slider::-moz-range-thumb {
+  width: 22px; height: 30px; border-radius: 0; background: rgb(var(--c-amber)); border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot, .marquee { animation: none; }
+}
