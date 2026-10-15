@@ -9,49 +9,29 @@ import { computeMix } from '../lib/gridModel'
  *     every hour of the weather series, from the shared grid model. Pure
  *     derivation, so it can never fail once weather exists.
  *  2. MEASURED HISTORY — national carbon intensity and renewable share, per
- *     year, from Our World in Data's open energy dataset.
- *     This is a real network call that can fail; it degrades independently.
+ *     year, from Our World in Data's open energy dataset (bundled with the site).
+ *     Loaded separately, so a failure here never affects the live panels.
  */
 
-// Our World in Data's open energy dataset, served through jsDelivr because the
-// OWID site itself sends no CORS headers (browsers would block a direct fetch).
-const DATASET = 'https://cdn.jsdelivr.net/gh/owid/energy-data@master/owid-energy-data.csv'
+// Annual series for the dashboard's countries, taken from Our World in Data's
+// open energy dataset and shipped with the site (see scripts/build-history.mjs).
+// Same-origin and a few kilobytes, so it loads reliably on any network.
+const HISTORY_URL = `${import.meta.env.BASE_URL}data/history.json`
 
-// One download per page load, shared by every region switch.
-let datasetPromise = null
-function loadDataset() {
-  if (!datasetPromise) {
-    datasetPromise = fetch(DATASET)
+let historyPromise = null
+function loadHistory() {
+  if (!historyPromise) {
+    historyPromise = fetch(HISTORY_URL)
       .then((r) => {
-        if (!r.ok) throw new Error(`Dataset unavailable (${r.status})`)
-        return r.text()
+        if (!r.ok) throw new Error(`History data unavailable (${r.status})`)
+        return r.json()
       })
       .catch((e) => {
-        datasetPromise = null // allow a retry
+        historyPromise = null // allow a retry
         throw e
       })
   }
-  return datasetPromise
-}
-
-/** Pull one country's (year, value) rows for a named column out of the CSV. */
-function seriesFor(csv, entity, column) {
-  const lines = csv.split('\n')
-  const header = lines[0].split(',')
-  const yearCol = header.indexOf('year')
-  const valueCol = header.indexOf(column)
-  if (yearCol < 0 || valueCol < 0) return []
-  const out = []
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i]
-    if (!line.startsWith(entity + ',')) continue
-    const cells = line.split(',')
-    if (cells[valueCol] === '' || cells[valueCol] === undefined) continue
-    const year = Number(cells[yearCol])
-    const value = Number(cells[valueCol])
-    if (Number.isFinite(year) && Number.isFinite(value)) out.push({ year, value })
-  }
-  return out.sort((a, b) => a.year - b.year)
+  return historyPromise
 }
 
 export function useGridData(weather, region) {
@@ -76,11 +56,12 @@ export function useGridData(weather, region) {
   useEffect(() => {
     let alive = true
     setHistory((h) => ({ ...h, status: 'loading' }))
-    loadDataset()
-      .then((csv) => {
+    loadHistory()
+      .then((data) => {
         if (!alive) return
-        const carbon = seriesFor(csv, region.owid, 'carbon_intensity_elec')
-        const renewables = seriesFor(csv, region.owid, 'renewables_share_elec')
+        const entry = data.countries?.[region.owid] ?? {}
+        const carbon = entry.carbon ?? []
+        const renewables = entry.renewables ?? []
         if (!carbon.length && !renewables.length) throw new Error(`No open data found for ${region.country}`)
         setHistory({ status: 'ready', carbon, renewables, error: null })
       })
