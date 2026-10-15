@@ -19,7 +19,7 @@ The look is "cinematic brutalism": heavy Inter Black headlines, sharp rectangles
 | Layer | Source | Notes |
 | --- | --- | --- |
 | Weather (wind, solar radiation, cloud, temperature) | [Open-Meteo](https://open-meteo.com/) | Live, keyless, refreshed every 10 minutes |
-| National carbon intensity and renewable share, by year | [Our World in Data](https://ourworldindata.org/electricity-mix) | Open CSVs |
+| National carbon intensity and renewable share, by year | [Our World in Data energy dataset](https://github.com/owid/energy-data) | Open CSV, served via jsDelivr for CORS |
 | Generation mix, carbon and price *now and next* | Modelled in `src/lib/gridModel.js` | Derived from the weather; capacities are illustrative, not metered |
 
 If a request fails the interface degrades gracefully: simulated weather is clearly labelled, and the history panel offers a retry.
