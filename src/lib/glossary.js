@@ -1,57 +1,57 @@
 /**
- * Plain-language definitions, written for a curious ten-year-old.
- * <Term k="spotPrice"> looks the entry up here, so a definition is
- * written once and explained the same way everywhere.
+ * Plain-language definitions, written so a ten-year-old could follow them.
+ * <Term k="spotPrice"> looks the entry up here, so each concept is explained
+ * once and identically wherever it appears.
  */
 export const GLOSSARY = {
   spotPrice: {
     label: 'Spot price',
     short: 'What electricity costs right now.',
-    long: 'Like surge pricing for power: it’s the price for electricity bought this very moment. When lots of cheap wind and sun are around, it drops. When the grid needs expensive backup plants, it jumps.',
+    long: 'The price paid for electricity delivered at this moment. It rises when expensive backup plants are needed and falls when wind and sunshine are plentiful.',
   },
   mwh: {
     label: 'Megawatt-hour',
-    short: 'A big bucket of electricity.',
-    long: 'One megawatt-hour (MWh) is enough electricity to run about 330 homes for one hour. Power plants and grids are measured in these big buckets.',
+    short: 'A large unit of electrical energy.',
+    long: 'One megawatt-hour (MWh) is roughly the electricity that 330 homes use in an hour. Grids and power stations are measured in these units.',
   },
   curtailment: {
     label: 'Curtailment',
-    short: 'Wasting clean power on purpose.',
-    long: 'Sometimes wind and sun make more electricity than anyone can use. Grid operators have to switch some turbines off, like turning down a tap when the bath is full.',
+    short: 'Clean power deliberately switched off.',
+    long: 'When wind and solar produce more than can be used or stored, operators turn some turbines and panels down, much like closing a tap when a bath is full.',
   },
   carbonIntensity: {
     label: 'Carbon intensity',
-    short: 'How dirty each unit of power is.',
-    long: 'It counts how many grams of carbon dioxide are released for every kilowatt-hour you use. A low number means the electricity is cleaner right now.',
+    short: 'How much carbon each unit of power releases.',
+    long: 'The grams of carbon dioxide emitted for every kilowatt-hour generated. A lower number means the electricity is cleaner at that moment.',
   },
   baseLoad: {
     label: 'Base load',
-    short: 'The power we always need.',
-    long: 'Even at 3 a.m. fridges hum, hospitals run and streetlights glow. Base load is that steady minimum of electricity a place needs around the clock.',
+    short: 'The power a region always needs.',
+    long: 'The minimum level of demand that continues around the clock, from refrigeration, hospitals, street lighting and industry.',
   },
   peakDemand: {
     label: 'Peak demand',
-    short: 'The busiest time on the grid.',
-    long: 'Everyone cooks, charges and switches on lights at about the same time in the evening. That rush is the peak, and the grid must be ready for it.',
+    short: 'The busiest period on the grid.',
+    long: 'The short window, usually in the evening, when cooking, heating, lighting and charging all overlap. The grid must be sized to meet it.',
   },
   capacityFactor: {
     label: 'Capacity factor',
     short: 'How hard a plant is working.',
-    long: 'A wind farm could make a lot of power if the wind were perfect. The capacity factor is the share of that maximum it’s actually making right now.',
+    long: 'The share of a plant’s maximum output that it is producing right now. A wind farm in a light breeze might run at 10%.',
   },
   meritOrder: {
     label: 'Merit order',
-    short: 'The queue of power plants.',
-    long: 'The grid asks the cheapest plants to run first: sun and wind cost nothing for fuel, then nuclear, then gas and coal. The last plant switched on sets the price for everyone.',
+    short: 'The ranking of power plants by cost.',
+    long: 'The grid calls on the cheapest sources first: wind and solar, then nuclear and hydro, then gas and coal. The last plant needed sets the price for everyone.',
   },
   shortwave: {
     label: 'Solar radiation',
-    short: 'How much sunshine hits the ground.',
-    long: 'Measured in watts per square metre. A bright summer noon is about 1,000. Clouds can cut it by more than half, which is why solar output changes so quickly.',
+    short: 'How much sunlight reaches the ground.',
+    long: 'Measured in watts per square metre. A clear summer midday is close to 1,000. Cloud can cut it by more than half, which is why solar output changes quickly.',
   },
   renewableShare: {
     label: 'Renewable share',
-    short: 'The slice of power that never runs out.',
-    long: 'The portion of electricity coming from sources nature refills, like wind, sun and flowing water, instead of burning fuel.',
+    short: 'The portion of power from sources that renew.',
+    long: 'The fraction of electricity produced from wind, sunlight and flowing water rather than from burning fuel.',
   },
 }

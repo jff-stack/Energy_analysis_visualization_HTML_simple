@@ -85,7 +85,7 @@ export default function App() {
 
       <footer className="border-t border-white/10 px-6 py-10">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-mute sm:flex-row sm:justify-between">
-          <span>Current: an interactive explainer for how electricity grids work.</span>
+          <span>Current. An interactive explainer on how electricity grids work.</span>
           <span>
             Weather:{' '}
             <a className="underline decoration-white/30 hover:text-ink" href="https://open-meteo.com/">Open-Meteo</a>

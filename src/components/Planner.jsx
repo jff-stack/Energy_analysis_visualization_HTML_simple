@@ -56,9 +56,9 @@ export default function Planner({ model, region }) {
         <SectionHead
           index="04"
           label={`Planner · ${region.city}`}
-          blurb="Shifting flexible use to the cleanest hours is how households make room for more renewable power."
+          blurb="Moving flexible loads to the cleanest hours allows more renewable output to be used directly."
         >
-          When should I <em>run it?</em>
+          When to <em>run it.</em>
         </SectionHead>
 
         <div className="grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
@@ -79,23 +79,23 @@ export default function Planner({ model, region }) {
             <p className="mt-4 text-xs text-mute">{item.kwh} kWh over {item.hours} hours</p>
 
             <motion.div key={`${id}-${best.start}`} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
-              <div className="eyebrow">{isNow ? 'Verdict' : 'Best start time'}</div>
+              <div className="eyebrow">{isNow ? 'Recommendation' : 'Best start time'}</div>
               <div className="numeral mt-2 text-[6.5rem] uppercase sm:text-[8.5rem]">
                 {isNow ? 'Now' : `${pad(best.hour)}:00`}
               </div>
               <p className="mt-5 max-w-md text-lg leading-relaxed text-ink/80">
                 {isNow ? (
-                  'Starting now is already the cleanest window in the next 24 hours.'
+                  'Starting now is already the lowest-carbon window in the next 24 hours.'
                 ) : (
                   <>
-                    Waiting until then cuts the <Term k="carbonIntensity">carbon</Term> of this job by about{' '}
+                    Starting at that hour lowers the <Term k="carbonIntensity">carbon intensity</Term> of this job by about{' '}
                     <b className="font-extrabold text-amber"><CountUp value={savedPct} />%</b>, avoiding roughly{' '}
                     <b className="font-extrabold text-amber"><CountUp value={savedG} /> g</b> of CO₂.
                   </>
                 )}
               </p>
               {costDelta > 0.005 && !isNow && (
-                <p className="mt-2 text-sm text-mute">Wholesale energy is about ${costDelta.toFixed(2)} cheaper.</p>
+                <p className="mt-2 text-sm text-mute">Wholesale energy cost is about ${costDelta.toFixed(2)} lower.</p>
               )}
             </motion.div>
           </div>
@@ -125,7 +125,7 @@ export default function Planner({ model, region }) {
               <span>+12 h</span>
               <span>+24 h</span>
             </div>
-            <p className="mt-3 text-xs text-mute">Bar height is carbon intensity; the amber bars are the recommended window.</p>
+            <p className="mt-3 text-xs text-mute">Bar height shows carbon intensity. Amber bars mark the recommended window.</p>
           </div>
         </div>
       </Frame>

@@ -61,7 +61,7 @@ function Notice({ children, action }) {
 }
 
 const RetryButton = ({ onClick }) => (
-  <button onClick={onClick} className="chip hover:bg-amber hover:text-void">Try again</button>
+  <button onClick={onClick} className="chip hover:bg-amber hover:text-void">Retry</button>
 )
 
 /** Download the modelled hourly series as a CSV the browser builds locally. */
@@ -89,7 +89,7 @@ export default function Dashboard({ region, weather, model, history, retryHistor
         <SectionHead
           index="02"
           label={`Dashboard · ${region.city}`}
-          blurb={`Real wind, sun and temperature from Open-Meteo drive a model of ${region.city}'s generation fleet. Refreshed every ten minutes.`}
+          blurb={`Live wind, solar radiation and temperature from Open-Meteo drive a model of ${region.city}'s generation fleet. Readings refresh every ten minutes.`}
         >
           What the grid is <em>doing.</em>
         </SectionHead>
@@ -98,13 +98,13 @@ export default function Dashboard({ region, weather, model, history, retryHistor
         <div className="flex min-h-[3.75rem] items-center border-b border-orange-900/50 px-5 py-3 sm:px-8">
           {weather.simulated ? (
             <Notice action={<RetryButton onClick={weather.refresh} />}>
-              Couldn&rsquo;t reach the weather service ({weather.error}). Showing a simulated day so you can keep exploring.
+              The weather service could not be reached ({weather.error}). A simulated day is shown so the interface remains usable.
             </Notice>
           ) : (
             <p className="text-xs leading-relaxed text-mute">
               {weather.status === 'ready' && weather.updatedAt
-                ? `Observed ${w?.time?.replace('T', ' ')} local · refreshed ${weather.updatedAt.toLocaleTimeString()} · generation, price and carbon are modelled from this weather, not metered.`
-                : 'Fetching live conditions…'}
+                ? `Observed ${w?.time?.replace('T', ' ')} local time. Refreshed ${weather.updatedAt.toLocaleTimeString()}. Generation, price and carbon intensity are modelled from this weather and are not metered values.`
+                : 'Retrieving live conditions.'}
             </p>
           )}
         </div>
@@ -112,16 +112,16 @@ export default function Dashboard({ region, weather, model, history, retryHistor
         {/* Data dims gently while a new region loads, rather than swapping out. */}
         <motion.div animate={{ opacity: refreshing ? 0.5 : 1 }} transition={{ duration: 0.35 }}>
           <div className="grid grid-cols-2 gap-px border-b border-orange-900/50 bg-orange-900/50 lg:grid-cols-4">
-            <Kpi loading={loading} label={<Term k="renewableShare">Renewable share</Term>} unit="%" note="Wind + solar + hydro">
+            <Kpi loading={loading} label={<Term k="renewableShare">Renewable share</Term>} unit="%" note="Wind, solar and hydro">
               {now && <CountUp value={now.renewableShare * 100} />}
             </Kpi>
-            <Kpi loading={loading} label={<Term k="carbonIntensity">Carbon intensity</Term>} unit="g/kWh" note="Per unit of electricity used">
+            <Kpi loading={loading} label={<Term k="carbonIntensity">Carbon intensity</Term>} unit="g/kWh" note="Per unit of electricity consumed">
               {now && <CountUp value={now.carbon} />}
             </Kpi>
-            <Kpi loading={loading} label={<Term k="spotPrice">Spot price</Term>} unit="$/MWh" note={now?.curtailed > 0 ? 'Surplus: price falling' : 'Modelled wholesale price'}>
+            <Kpi loading={loading} label={<Term k="spotPrice">Spot price</Term>} unit="$/MWh" note={now?.curtailed > 0 ? 'Surplus supply, price falling' : 'Modelled wholesale price'}>
               {now && <CountUp value={now.price} />}
             </Kpi>
-            <Kpi loading={loading} label={<Term k="capacityFactor">Wind output</Term>} unit="%" note={w ? `${Math.round(w.windKmh)} km/h at ground level` : ''}>
+            <Kpi loading={loading} label={<Term k="capacityFactor">Wind output</Term>} unit="%" note={w ? `${Math.round(w.windKmh)} km/h at 10 m` : ''}>
               {w && <CountUp value={windCapacityFactor(w.windKmh) * 100} />}
             </Kpi>
           </div>
@@ -129,8 +129,8 @@ export default function Dashboard({ region, weather, model, history, retryHistor
           <div className="border-b border-orange-900/50">
             <Reveal>
               <Panel
-                eyebrow="48 hours"
-                title="Generation, hour by hour"
+                eyebrow="Two-day outlook"
+                title="Generation by hour"
                 aside={
                   model && (
                     <button onClick={() => downloadCsv(region, model.hourly)} className="btn btn-ghost !px-4 !py-2.5 !text-[11px]">
@@ -150,12 +150,12 @@ export default function Dashboard({ region, weather, model, history, retryHistor
 
           <div className="grid border-b border-orange-900/50 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
             <Reveal className="border-b border-orange-900/50 lg:border-b-0 lg:border-r">
-              <Panel eyebrow="This hour" title="Where the power comes from">
+              <Panel eyebrow="Current hour" title="Generation mix">
                 {now ? <MixDonut mix={now} /> : <LoadingBlock height={210} label="Loading mix" />}
               </Panel>
             </Reveal>
             <Reveal delay={0.08}>
-              <Panel eyebrow="This hour" title="How clean is it?">
+              <Panel eyebrow="Current hour" title="Carbon intensity">
                 {now ? <CarbonGauge value={now.carbon} /> : <LoadingBlock height={210} label="Loading gauge" />}
               </Panel>
             </Reveal>
@@ -167,14 +167,14 @@ export default function Dashboard({ region, weather, model, history, retryHistor
         <Reveal>
           <Panel
             eyebrow={`Measured · ${region.country}`}
-            title="The long road to cleaner power"
-            aside={<span className="text-xs text-mute">Yearly national data · Our World in Data</span>}
+            title="Long-term trend"
+            aside={<span className="text-xs text-mute">Annual national data · Our World in Data</span>}
           >
             <div className="min-h-[330px]">
               {!hasHistory && history.status === 'loading' && <LoadingBlock height={330} label="Loading history" />}
               {history.status === 'error' && (
                 <Notice action={<RetryButton onClick={retryHistory} />}>
-                  The open history dataset couldn&rsquo;t be loaded ({history.error}). Everything else still works.
+                  The historical dataset could not be loaded ({history.error}). The rest of the dashboard is unaffected.
                 </Notice>
               )}
               {hasHistory && (

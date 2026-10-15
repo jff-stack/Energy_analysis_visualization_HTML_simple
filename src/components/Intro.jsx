@@ -59,7 +59,7 @@ export default function Intro({ onDone }) {
           <span className="display block text-[clamp(4rem,17vw,16rem)]">The grid</span>
         </div>
         <div data-intro-word className="overflow-hidden">
-          <span className="display block text-[clamp(4rem,17vw,16rem)] text-amber">awakens</span>
+          <span className="display block text-[clamp(4rem,17vw,16rem)] text-amber">in motion</span>
         </div>
       </div>
 

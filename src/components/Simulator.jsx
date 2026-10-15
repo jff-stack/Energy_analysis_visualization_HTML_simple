@@ -18,11 +18,11 @@ import { dailyCurve, windCapacityFactor } from '../lib/gridModel'
  */
 
 const PRESETS = [
-  { id: 'calm', label: 'Still & cloudy', wind: 4, sun: 120, temp: 12 },
-  { id: 'sunny', label: 'Bright summer day', wind: 12, sun: 950, temp: 28 },
+  { id: 'calm', label: 'Calm and overcast', wind: 4, sun: 120, temp: 12 },
+  { id: 'sunny', label: 'Clear summer day', wind: 12, sun: 950, temp: 28 },
   { id: 'storm', label: 'Windy front', wind: 58, sun: 260, temp: 9 },
   { id: 'heat', label: 'Heatwave', wind: 6, sun: 1000, temp: 38 },
-  { id: 'glut', label: 'Windy & sunny', wind: 52, sun: 900, temp: 18 },
+  { id: 'glut', label: 'Windy and sunny', wind: 52, sun: 900, temp: 18 },
 ]
 
 /** Ease a number toward `target` with a spring; returns the in-flight value. */
@@ -114,7 +114,7 @@ function SimChart({ curve }) {
       </svg>
 
       <div className="mt-5 flex items-center justify-between text-xs text-mute">
-        <span className="eyebrow">Price across the day</span>
+        <span className="eyebrow">Wholesale price over the day</span>
         <span className="tabular-nums">${Math.round(g.pLo)} to ${Math.round(g.pHi)} /MWh</span>
       </div>
       <svg viewBox={`0 0 ${CW} ${PH}`} className="mt-1 w-full" role="img" aria-label="Simulated wholesale price across one day">
@@ -173,12 +173,12 @@ export default function Simulator({ region, start, seed }) {
 
   const story =
     day.shortfall > 0
-      ? 'Demand outran the plants available. Prices spike while the grid scrambles for emergency supply.'
+      ? 'Demand exceeds available capacity. Prices spike as the system draws on emergency supply.'
       : day.curtailed > 0
-      ? 'More clean power than the region can use: turbines are switched off (curtailment) and prices dip toward zero or below.'
+      ? 'Renewable output exceeds demand. Operators curtail wind and solar, and prices fall towards zero or below.'
       : day.fossilShare > 0.35
-      ? 'Wind and sun are quiet, so gas and coal fill the gap, and the last plant in the queue sets a high price.'
-      : 'A healthy balance: renewables cover most of the day and fossil plants only top up the evening peak.'
+      ? 'Wind and solar output is low, so gas and coal plants fill the gap and the marginal plant sets a high price.'
+      : 'Renewables cover most of the day, with fossil plants needed mainly to meet the evening peak.'
 
   const apply = (p) => {
     setPreset(p.id)
@@ -197,9 +197,9 @@ export default function Simulator({ region, start, seed }) {
         <SectionHead
           index="03"
           label={`Simulator · ${region.city}`}
-          blurb={<>Drag the sliders and watch a full day on {region.city}&rsquo;s grid rebuild itself: who generates, how dirty it is, and what the <Term k="spotPrice">spot price</Term> does.</>}
+          blurb={<>Change wind, sunlight and temperature to see how a full day on {region.city}&rsquo;s grid responds: the generation mix, carbon intensity and <Term k="spotPrice">spot price</Term>.</>}
         >
-          Be the <em>weather.</em>
+          Adjust the <em>weather.</em>
         </SectionHead>
 
         <div className="grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
@@ -223,17 +223,17 @@ export default function Simulator({ region, start, seed }) {
             <Slider
               id="sim-wind" label="Wind speed" unit="km/h" min={0} max={80} value={wind}
               onChange={manual(setWind)}
-              hint={<>Turbines are making {turbine}% of their rating (<Term k="capacityFactor">capacity factor</Term>).</>}
+              hint={<>Turbines are producing {turbine}% of rated output (<Term k="capacityFactor">capacity factor</Term>).</>}
             />
             <Slider
-              id="sim-sun" label="Peak sunlight" unit="W/m²" min={0} max={1000} step={10} value={sun}
+              id="sim-sun" label="Peak solar radiation" unit="W/m²" min={0} max={1000} step={10} value={sun}
               onChange={manual(setSun)}
-              hint={<>Strength of midday <Term k="shortwave">solar radiation</Term>. Clouds lower it.</>}
+              hint={<>Peak midday <Term k="shortwave">solar radiation</Term>. Cloud cover reduces it.</>}
             />
             <Slider
               id="sim-temp" label="Temperature" unit="°C" min={-15} max={42} value={temp}
               onChange={manual(setTemp)}
-              hint="Cold snaps and heatwaves both push demand up as heating and cooling ramp."
+              hint="Heating and cooling loads both raise demand as temperatures move away from a mild 18 °C."
             />
 
             <motion.p
@@ -255,7 +255,7 @@ export default function Simulator({ region, start, seed }) {
               <Stat label={<Term k="carbonIntensity">Carbon</Term>}>
                 <CountUp value={day.carbon} duration={0.4} /><small>g/kWh</small>
               </Stat>
-              <Stat label={<Term k="spotPrice">Avg price</Term>}>
+              <Stat label={<Term k="spotPrice">Average price</Term>}>
                 $<CountUp value={day.price} duration={0.4} /><small>/MWh</small>
               </Stat>
               <Stat label={<Term k="curtailment">Curtailed</Term>}>

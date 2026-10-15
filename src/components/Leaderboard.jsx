@@ -23,10 +23,10 @@ export default function Leaderboard({ region, onRegion }) {
       <Frame>
         <SectionHead
           index="05"
-          label="Compare"
-          blurb={<>Nine cities ranked by <Term k="renewableShare">renewable share</Term>. Sunny noon in one place is the middle of the night in another. Pick a city to load it into the dashboard.</>}
+          label="Comparison"
+          blurb={<>Nine cities ranked by current <Term k="renewableShare">renewable share</Term>. Daylight and weather differ by region, so the order shifts through the day. Select a city to load it into the dashboard.</>}
         >
-          Who&rsquo;s greenest <em>right now?</em>
+          Cleanest grid <em>right now.</em>
         </SectionHead>
 
         {/* A fixed-height stage: loading, error and ready all occupy the same box. */}
@@ -34,8 +34,8 @@ export default function Leaderboard({ region, onRegion }) {
           {status === 'loading' && <LoadingBlock height={9 * ROW} label="Loading all regions" />}
           {status === 'error' && (
             <div className="flex flex-wrap items-center gap-3 p-8 text-sm" role="status">
-              <span>Couldn&rsquo;t load the comparison ({error}).</span>
-              <button onClick={retry} className="chip hover:bg-amber hover:text-void">Try again</button>
+              <span>The comparison could not be loaded ({error}).</span>
+              <button onClick={retry} className="chip hover:bg-amber hover:text-void">Retry</button>
             </div>
           )}
           {status === 'ready' && (

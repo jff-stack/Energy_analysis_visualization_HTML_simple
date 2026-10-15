@@ -138,7 +138,7 @@ export default function ForecastChart({ hourly, nowIndex, replayKey }) {
           ) : null,
         )}
       </svg>
-      <p className="mt-3 text-xs text-mute">Dotted line is demand. Hover or drag across the chart to read any hour.</p>
+      <p className="mt-3 text-xs text-mute">The dotted line shows demand. Hover or drag across the chart to read any hour.</p>
     </div>
   )
 }

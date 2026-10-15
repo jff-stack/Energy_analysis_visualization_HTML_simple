@@ -7,8 +7,8 @@ export default function Glossary() {
   return (
     <section id="glossary" className="border-t border-orange-900/50">
       <Frame>
-        <SectionHead index="07" label="Glossary" blurb="Every dotted word in the page, explained the way you would to a ten-year-old.">
-          The words, <em>made simple.</em>
+        <SectionHead index="07" label="Glossary" blurb="Each underlined term on the page is defined here in plain language.">
+          Key <em>terms.</em>
         </SectionHead>
         <div className="grid gap-px bg-orange-900/50 sm:grid-cols-2 lg:grid-cols-3">
           {Object.entries(GLOSSARY).map(([k, g], i) => (

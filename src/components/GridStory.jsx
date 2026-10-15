@@ -32,41 +32,41 @@ const hours = Array.from({ length: 49 }, (_, i) => i / 2)
 const CHAPTERS = [
   {
     n: '01',
-    title: 'A region breathes.',
+    title: 'Demand follows the day.',
     body: (
       <>
-        Every second, homes, trains and factories pull electricity from one shared network. Add it all up and you get a
-        curve that rises and falls with the day.
+        A regional grid supplies homes, transit and industry from one shared network. Aggregate demand rises and falls
+        on a daily rhythm, and supply has to match it second by second.
       </>
     ),
   },
   {
     n: '02',
-    title: 'Some of it never stops.',
+    title: 'A floor that never drops.',
     body: (
       <>
-        Even at 3 a.m. fridges hum and hospitals run. That steady floor is the <Term k="baseLoad">base load</Term>, and
-        it&rsquo;s been served by big plants that run day and night.
+        Overnight, demand does not fall to zero. Refrigeration, hospitals and industry set a minimum known as{' '}
+        <Term k="baseLoad">base load</Term>, traditionally met by large plants that run continuously.
       </>
     ),
   },
   {
     n: '03',
-    title: 'Then everyone gets home.',
+    title: 'The evening peak.',
     body: (
       <>
-        Cooking, charging, lights: the evening <Term k="peakDemand">peak</Term> is short but tall. Meeting it means
-        calling in the most expensive, most polluting plants on the list.
+        As people return home, cooking, heating and charging push demand to its daily maximum. Serving a short{' '}
+        <Term k="peakDemand">peak</Term> means calling on the most expensive and carbon-intensive generators.
       </>
     ),
   },
   {
     n: '04',
-    title: 'Sun and wind take a shift.',
+    title: 'Weather joins the supply.',
     body: (
       <>
-        Wind and solar cost nothing to fuel, so they jump to the front of the <Term k="meritOrder">queue</Term>. The
-        more they make, the less gas the grid burns. Weather is now part of the grid.
+        Wind and solar have no fuel cost, so they dispatch first in the <Term k="meritOrder">merit order</Term>. The
+        more they produce, the less gas the grid burns, which lowers both price and emissions.
       </>
     ),
   },
@@ -136,7 +136,7 @@ export default function GridStory() {
         const t = tl.time()
         const idx = t < 1.1 ? 0 : t < 2.2 ? 1 : t < 3.3 ? 2 : 3
         dots.forEach((d, i) => {
-          d.style.background = i <= idx ? 'rgb(var(--c-amber))' : 'rgb(255 214 170 / 0.18)'
+          d.style.background = i <= idx ? 'rgb(var(--c-amber))' : 'rgb(124 45 18 / 0.6)'
         })
       })
 
@@ -164,19 +164,22 @@ export default function GridStory() {
     <section ref={root} id="story" className="relative flex min-h-screen items-center overflow-hidden border-t border-orange-900/50" aria-label="How the grid works, in four steps">
       <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-6 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
         <div>
-          <div className="eyebrow mb-6">01 / The grid story</div>
-          <div className={`relative ${reduced ? 'space-y-10' : 'h-[290px] sm:h-[260px]'}`}>
+          {/* Progress sits above the text, in its own row, so it can never collide with a chapter. */}
+          <div className="mb-8 flex items-center gap-4">
+            <span className="eyebrow">01 / The grid story</span>
+            <div className="flex flex-1 gap-1.5" aria-hidden="true">
+              {CHAPTERS.map((c) => (
+                <span key={c.n} data-dot className="h-[3px] flex-1 transition-colors duration-500" style={{ background: 'rgb(124 45 18 / 0.6)' }} />
+              ))}
+            </div>
+          </div>
+          <div className={`relative ${reduced ? 'space-y-10' : 'h-[24rem] sm:h-[22rem]'}`}>
             {CHAPTERS.map((c) => (
               <div key={c.n} data-chapter className={reduced ? '' : 'absolute inset-x-0 top-0'}>
                 <span className="eyebrow">{c.n} / 04</span>
                 <h2 className="display mt-3 text-5xl sm:text-7xl">{c.title}</h2>
                 <p className="mt-5 max-w-md text-lg leading-relaxed text-ink/75">{c.body}</p>
               </div>
-            ))}
-          </div>
-          <div className="mt-6 flex gap-2" aria-hidden="true">
-            {CHAPTERS.map((c) => (
-              <span key={c.n} data-dot className="h-1 w-10 transition-colors duration-500" style={{ background: 'rgb(255 214 170 / 0.18)' }} />
             ))}
           </div>
         </div>

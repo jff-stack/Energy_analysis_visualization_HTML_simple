@@ -8,28 +8,28 @@ import SectionHead, { Frame } from './SectionHead'
  */
 const QUESTIONS = [
   {
-    q: 'It is a calm, cloudy evening. What happens to the spot price?',
+    q: 'On a calm, overcast evening, what happens to the wholesale price?',
     options: ['It falls', 'It rises', 'It stays the same'],
     answer: 1,
-    why: 'Wind and sun are quiet while demand peaks, so expensive gas and coal plants set the price.',
+    why: 'Wind and solar output is low while demand peaks, so expensive gas and coal plants set the price.',
   },
   {
     q: 'What is base load?',
     options: ['The busiest hour of the day', 'The minimum power always needed', 'Power from batteries'],
     answer: 1,
-    why: 'Base load is the steady floor of demand that exists even at 3 a.m.',
+    why: 'Base load is the steady minimum of demand that persists even overnight.',
   },
   {
     q: 'Why would a grid operator switch off working wind turbines?',
     options: ['They are broken', 'There is more supply than demand', 'To save the wind for later'],
     answer: 1,
-    why: 'This is curtailment: if supply beats demand and nothing can store the surplus, turbines are turned down.',
+    why: 'This is curtailment: when supply exceeds demand and the surplus cannot be stored, turbines are turned down.',
   },
   {
-    q: 'Which is the best time to charge an electric car for low carbon?',
+    q: 'When is the best time to charge an electric vehicle to minimise carbon?',
     options: ['During the evening peak', 'When wind and solar are strong', 'Whenever the car is plugged in'],
     answer: 1,
-    why: 'When renewables are abundant, less fossil fuel is burned for each unit of electricity.',
+    why: 'When renewables are abundant, less fossil fuel is burned for each unit of electricity delivered.',
   },
 ]
 
@@ -58,8 +58,8 @@ export default function Quiz() {
   return (
     <section id="quiz" className="border-t border-orange-900/50">
       <Frame>
-        <SectionHead index="06" label="Check yourself" blurb="Four quick questions on what you just saw.">
-          Did it <em>land?</em>
+        <SectionHead index="06" label="Review" blurb="Four questions on the concepts covered above.">
+          Test your <em>understanding.</em>
         </SectionHead>
 
         <div className="min-h-[420px] px-5 py-8 sm:px-8 sm:py-12" aria-live="polite">
@@ -112,7 +112,7 @@ export default function Quiz() {
                     {score}<span className="text-5xl text-ink/40">/{QUESTIONS.length}</span>
                   </div>
                   <p className="mt-4 text-lg text-ink/80">
-                    {score === QUESTIONS.length ? 'Perfect. You can read a grid.' : score >= 2 ? 'Solid. Try the simulator to lock it in.' : 'Scroll back to the story and try again.'}
+                    {score === QUESTIONS.length ? 'Full marks.' : score >= 2 ? 'A solid result. The simulator is a good way to reinforce the rest.' : 'Revisit the story above and try again.'}
                   </p>
                   <button onClick={restart} className="btn btn-primary mt-6">Play again</button>
                 </motion.div>

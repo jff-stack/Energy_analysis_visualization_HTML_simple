@@ -41,11 +41,11 @@ export default function Hero({ region, now, loading, go }) {
           <div className="grid border-t border-orange-900/50 lg:grid-cols-[minmax(0,6fr)_minmax(0,4fr)_minmax(0,3fr)]">
             <motion.div variants={fade} className="border-b border-orange-900/50 px-5 py-8 sm:px-8 lg:border-b-0 lg:border-r">
               <p className="max-w-lg text-xl leading-snug text-ink/80">
-                Electricity has to be made the instant it&rsquo;s used. Watch real weather shape a whole power system,
-                then take the controls yourself.
+                Electricity is generated at the moment it is consumed. This explainer pairs live weather observations with
+                a model of a regional grid to show how wind, sunlight and demand set the price and carbon intensity of power.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <a href="#story" className="btn btn-primary">Start the story ↓</a>
+                <a href="#story" className="btn btn-primary">Read the story ↓</a>
                 <a href="#simulator" className="btn btn-ghost">Open the simulator</a>
               </div>
             </motion.div>
